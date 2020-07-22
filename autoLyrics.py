@@ -4,10 +4,52 @@ import os
 import xml.etree.ElementTree
 import glob
 import subprocess
+import platform
 
 MAGIC_SONG_NAMES=["Verse", "Chorus", "Bridge", "CCLI Song #", "Interlude", "Ending"]
 
+def call_inkscape(inputpath, outputpath):
+    """Call inkscape to build a PNG
+
+    Keyword arguements:
+    inputpath -- string containing the filename of an SVG file.
+    outputpath -- string containing the output filename (.png will be added).
+    """    
+
+    print("Writing {}.png".format(outputpath))
+
+    if platform.system() == "Windows":
+        subprocess.check_call(
+            [
+                "C:\\Program Files\\Inkscape\\bin\\inkscape.exe",
+                "-C",
+                "-o",
+                "{}.png".format(outputpath),
+                "-w", 
+                "1920",
+                inputpath,
+            ]
+        )
+    else:
+        subprocess.check_call(
+            [
+                "inkscape",
+                "-z",
+                "-C",
+                "-e={}.png".format(outputpath),
+                "-f={}".format(inputpath),
+                "-w=1920",
+            ]
+        )
+
 def songparse(wordsfile):
+    """Parse a txt file for song lyrics.
+    Returns a dictionary containing each block of lyrics, the title and
+    the original order of the blocks.
+
+    Keyword arguements:
+    wordsfile -- string containing the filename of a text file.
+    """
     output = {"Title":[],"Order":[]}
     current_block = "Title"
 
@@ -28,7 +70,16 @@ def songparse(wordsfile):
     return output
 
 class SongPlates:
+    """A class to hold together useful information about a set of song 'plates'
+    """
+
     def __init__(self, words_template, title_template):
+        """Build songplates by parsing SVG templates for tagged elements.
+
+        Keyword arguements:
+        words_template -- string filename to the SVG template for words
+        title_template -- string filename to the SVG template for the title slide
+        """
         self.words_et = xml.etree.ElementTree.parse(words_template)
         self.words_lines = []
         # Finding all the tagged things and splitting them up
@@ -47,9 +98,17 @@ class SongPlates:
                 self.title_author = item
 
     def num_lines_per_plate(self):
+        """Return the number of lines available in the words template
+        """
         return len(self.words_lines)
 
     def gen_plates(self, parsed_song):
+        """Generate the images for a given song.
+        Steps through the various blocks of words creating PNG images.
+
+        Keyword arguements:
+        parsed_song -- A dictionary, typcially the output from songparse()
+        """
 
         songTitle = parsed_song["Title"][0]
         if not os.path.exists(songTitle):
@@ -76,16 +135,7 @@ class SongPlates:
 
                     self.words_et.write("temp.svg")
 
-                    subprocess.check_call(
-                        [
-                            "inkscape",
-                            "-z",
-                            "-C",
-                            "-e={}.png".format(os.path.join(songTitle, filename)),
-                            "-f=temp.svg",
-                            "-w=1920",
-                        ]
-                    )
+                    call_inkscape("temp.svg", os.path.join(songTitle, filename))
 
         self.title_title.text = '"{}"'.format(songTitle)
         self.title_author.text = None
@@ -94,21 +144,9 @@ class SongPlates:
                 self.title_author.text = parsed_song[i][0].replace("|", "/")
 
         self.title_et.write("temp.svg")
-        subprocess.check_call(
-            [
-                "inkscape",
-                "-z",
-                "-C",
-                "-e={}.png".format(os.path.join(songTitle, "titleslide")),
-                "-f=temp.svg",
-                "-w=1920",
-            ]
-        )
+
+        call_inkscape("temp.svg", os.path.join(songTitle, "titleslide"))
                     
-
-
-
-
 plates = SongPlates("basebackground.svg", "introslide.svg")
 for file in glob.glob("*.txt"):
     song_info = songparse(file)
