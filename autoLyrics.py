@@ -15,14 +15,21 @@ Copyright 2020 Dominic J. P. Crutchley
    limitations under the License.
 """
 
-import argparse
 import os
 import xml.etree.ElementTree
 import glob
 import subprocess
 import platform
 
-MAGIC_SONG_NAMES=["Verse", "Chorus", "Bridge", "CCLI Song #", "Interlude", "Ending"]
+MAGIC_SONG_NAMES = [
+    "Verse",
+    "Chorus",
+    "Bridge",
+    "CCLI Song #",
+    "Interlude",
+    "Ending"
+]
+
 
 def call_inkscape(inputpath, outputpath):
     """Call inkscape to build a PNG
@@ -30,7 +37,7 @@ def call_inkscape(inputpath, outputpath):
     Keyword arguements:
     inputpath -- string containing the filename of an SVG file.
     outputpath -- string containing the output filename (.png will be added).
-    """    
+    """
 
     print("Writing {}.png".format(outputpath))
 
@@ -41,7 +48,7 @@ def call_inkscape(inputpath, outputpath):
                 "-C",
                 "-o",
                 "{}.png".format(outputpath),
-                "-w", 
+                "-w",
                 "1920",
                 inputpath,
             ]
@@ -57,6 +64,7 @@ def call_inkscape(inputpath, outputpath):
                 "-w=1920",
             ]
         )
+
 
 def songparse(wordsfile):
     """Parse a txt file for song lyrics.
@@ -84,6 +92,7 @@ def songparse(wordsfile):
     output["Order"] = output["Order"][:-1]
 
     return output
+
 
 class SongPlates:
     """A class to hold together useful information about a set of song 'plates'
@@ -129,7 +138,7 @@ class SongPlates:
         songTitle = parsed_song["Title"][0]
         if not os.path.exists(songTitle):
             os.makedirs(songTitle)
-            
+
         for section in parsed_song:
             if not any(map(section.startswith, ["Title", "Order", "CCLI"])):
                 count = 0
@@ -137,15 +146,15 @@ class SongPlates:
                 """Yield successive n-sized chunks from lst."""
                 for i in range(0, len(parsed_song[section]), self.num_lines_per_plate()):
                     count += 1
-                    
+
                     words_for_plate = parsed_song[section][i:i + self.num_lines_per_plate()]
 
                     short_words = "".join(words_for_plate)
                     short_words = "".join(short_words.split())
                     short_words = short_words.replace("'", "")
-                    
+
                     filename = "{}-{:02}-{:.15s}".format(shortSection,count,short_words)
-                    
+
                     for element, text in zip(self.words_lines,words_for_plate):
                         element.text = text
 
@@ -162,7 +171,7 @@ class SongPlates:
         self.title_et.write("temp.svg")
 
         call_inkscape("temp.svg", os.path.join(songTitle, "titleslide"))
-                    
+
 plates = SongPlates("basebackground.svg", "introslide.svg")
 for file in glob.glob("*.txt"):
     song_info = songparse(file)
