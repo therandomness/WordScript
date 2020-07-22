@@ -4,6 +4,8 @@ Designed to convert words from systems such as CCLI SongSelect into PNG slides t
 
 Place text files in the root directory and run the script.  It will create a folder per text file and populate it with PNG files.
 
+`ExampleSong.txt` is provided to help you test the system is working.
+
 ## Usage on Linux
 
 Install python3 and inkscape.  For Ubuntu try
