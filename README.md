@@ -16,7 +16,7 @@ Install python3 and inkscape.  For Ubuntu try
 
 Excute script from root folder of repo.
 
-    python3 autoLyrics.py
+    python3 auto_lyrics.py
 
 ## Usage on Windows
 
@@ -25,5 +25,5 @@ Install [Python3 for windows](https://www.python.org/downloads/release/python-38
 Install [Inkscape for windows](https://inkscape.org/release/inkscape-1.0/)
 
 Run by either:
-* Running by double-clicking `autoLyrics.py`, a window should print progress as the slides are created
-* Enter the console, navigate to the root of this repo and execute `py autoLyrics.py`
+* Running by double-clicking `auto_lyrics.py`, a window should print progress as the slides are created
+* Enter the console, navigate to the root of this repo and execute `py auto_lyrics.py`

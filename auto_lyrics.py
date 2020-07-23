@@ -74,7 +74,7 @@ def songparse(wordsfile):
     Keyword arguements:
     wordsfile -- string containing the filename of a text file.
     """
-    output = { "Title": [], "Order": [] }
+    output = {"Title": [], "Order": []}
     current_block = "Title"
 
     with open(wordsfile, "r") as songfile:
@@ -110,7 +110,7 @@ class SongPlates:
         # Finding all the tagged things and splitting them up
         for item in self.words_et.findall('.//*[@id]'):
             if item.attrib['id'] == "words":
-                self.words_lines += [x for x in item]
+                self.words_lines += item
 
         self.title_et = xml.etree.ElementTree.parse(title_template)
         self.title_title = None
@@ -143,11 +143,17 @@ class SongPlates:
             if not any(map(section.startswith, ["Title", "Order", "CCLI"])):
                 count = 0
                 short_section = "".join([x[0] for x in section.split(" ")])
-                """Yield successive n-sized chunks from lst."""
-                for i in range(0, len(parsed_song[section]), self.num_lines_per_plate()):
+
+                #Yield successive n-sized chunks from lst.
+                for i in range(
+                        0,
+                        len(parsed_song[section]),
+                        self.num_lines_per_plate()
+                        ):
                     count += 1
 
-                    words_for_plate = parsed_song[section][i:i + self.num_lines_per_plate()]
+                    words_for_plate = parsed_song[
+                        section][i:i + self.num_lines_per_plate()]
 
                     short_words = "".join(words_for_plate)
                     short_words = "".join(short_words.split())
@@ -159,12 +165,18 @@ class SongPlates:
                         short_words
                         )
 
-                    for element, text in zip(self.words_lines,words_for_plate):
+                    for element, text in zip(self.words_lines, words_for_plate):
                         element.text = text
 
                     self.words_et.write("temp.svg")
 
-                    call_inkscape("temp.svg", os.path.join(song_title, filename))
+                    call_inkscape(
+                        "temp.svg",
+                        os.path.join(
+                            song_title,
+                            filename
+                        )
+                    )
 
         self.title_title.text = '"{}"'.format(song_title)
         self.title_author.text = None
