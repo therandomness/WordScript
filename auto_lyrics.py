@@ -144,12 +144,11 @@ class SongPlates:
                 count = 0
                 short_section = "".join([x[0] for x in section.split(" ")])
 
-                #Yield successive n-sized chunks from lst.
+                # Yield successive n-sized chunks from lst.
                 for i in range(
                         0,
                         len(parsed_song[section]),
-                        self.num_lines_per_plate()
-                        ):
+                        self.num_lines_per_plate()):
                     count += 1
 
                     words_for_plate = parsed_song[
@@ -165,7 +164,9 @@ class SongPlates:
                         short_words
                         )
 
-                    for element, text in zip(self.words_lines, words_for_plate):
+                    for element, text in zip(
+                            self.words_lines,
+                            words_for_plate):
                         element.text = text
 
                     self.words_et.write("temp.svg")
