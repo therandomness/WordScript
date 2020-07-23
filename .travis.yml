@@ -10,7 +10,7 @@ jobs:
       script: pytest --flake8
     - script: pytest --pylint
     - stage: test
-      script: python3 autoLyrics.py
+      script: python3 auto_lyrics.py
       
 stages:
   - lint
