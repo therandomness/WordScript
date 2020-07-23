@@ -74,7 +74,7 @@ def songparse(wordsfile):
     Keyword arguements:
     wordsfile -- string containing the filename of a text file.
     """
-    output = {"Title":[],"Order":[]}
+    output = { "Title": [], "Order": [] }
     current_block = "Title"
 
     with open(wordsfile, "r") as songfile:
@@ -102,14 +102,14 @@ class SongPlates:
         """Build songplates by parsing SVG templates for tagged elements.
 
         Keyword arguements:
-        words_template -- string filename to the SVG template for words
-        title_template -- string filename to the SVG template for the title slide
+        words_template -- string filename of SVG template for words
+        title_template -- string filename of SVG template for the title slide
         """
         self.words_et = xml.etree.ElementTree.parse(words_template)
         self.words_lines = []
         # Finding all the tagged things and splitting them up
         for item in self.words_et.findall('.//*[@id]'):
-            if (item.attrib['id'] == "words"):
+            if item.attrib['id'] == "words":
                 self.words_lines += [x for x in item]
 
         self.title_et = xml.etree.ElementTree.parse(title_template)
@@ -117,9 +117,9 @@ class SongPlates:
         self.title_author = None
         # Finding all the tagged things and splitting them up
         for item in self.title_et.findall('.//*[@id]'):
-            if (item.attrib['id'] == "SongTitle"):
+            if item.attrib['id'] == "SongTitle":
                 self.title_title = item
-            elif (item.attrib['id'] == "SongAuthor"):
+            elif item.attrib['id'] == "SongAuthor":
                 self.title_author = item
 
     def num_lines_per_plate(self):
@@ -135,14 +135,14 @@ class SongPlates:
         parsed_song -- A dictionary, typcially the output from songparse()
         """
 
-        songTitle = parsed_song["Title"][0]
-        if not os.path.exists(songTitle):
-            os.makedirs(songTitle)
+        song_title = parsed_song["Title"][0]
+        if not os.path.exists(song_title):
+            os.makedirs(song_title)
 
         for section in parsed_song:
             if not any(map(section.startswith, ["Title", "Order", "CCLI"])):
                 count = 0
-                shortSection = "".join([x[0] for x in section.split(" ")])
+                short_section = "".join([x[0] for x in section.split(" ")])
                 """Yield successive n-sized chunks from lst."""
                 for i in range(0, len(parsed_song[section]), self.num_lines_per_plate()):
                     count += 1
@@ -153,16 +153,20 @@ class SongPlates:
                     short_words = "".join(short_words.split())
                     short_words = short_words.replace("'", "")
 
-                    filename = "{}-{:02}-{:.15s}".format(shortSection,count,short_words)
+                    filename = "{}-{:02}-{:.15s}".format(
+                        short_section,
+                        count,
+                        short_words
+                        )
 
                     for element, text in zip(self.words_lines,words_for_plate):
                         element.text = text
 
                     self.words_et.write("temp.svg")
 
-                    call_inkscape("temp.svg", os.path.join(songTitle, filename))
+                    call_inkscape("temp.svg", os.path.join(song_title, filename))
 
-        self.title_title.text = '"{}"'.format(songTitle)
+        self.title_title.text = '"{}"'.format(song_title)
         self.title_author.text = None
         for i in parsed_song:
             if i.startswith("CCLI"):
@@ -170,7 +174,8 @@ class SongPlates:
 
         self.title_et.write("temp.svg")
 
-        call_inkscape("temp.svg", os.path.join(songTitle, "titleslide"))
+        call_inkscape("temp.svg", os.path.join(song_title, "titleslide"))
+
 
 plates = SongPlates("basebackground.svg", "introslide.svg")
 for file in glob.glob("*.txt"):
