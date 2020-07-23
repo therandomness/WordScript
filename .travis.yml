@@ -7,7 +7,9 @@ jobs:
       script: pytest --flake8
     - install: pip install pytest-pylint
       script: pytest --pylint
-    - install: sudo apt install inkscape
+    - before_install:
+        - sudo apt-get update
+        - sudo apt-get -y install inkscape
       stage: test
       script: python3 auto_lyrics.py
 
