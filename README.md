@@ -8,7 +8,14 @@ Place text files in the root directory and run the script.  It will create a fol
 
 `ExampleSong.txt` is provided to help you test the system is working.
 
-## Usage on Linux
+## Customisation
+
+You can customise the slide templates by directly editing them in Inkscape.  The script uses metadata 'ids' on the text fields to identify and alter the text, so actions like: adding elements, changing colors, fonts and sizing should all work seemlessly.
+
+Also, you can edit the sample text to have the number of lines you want per slide and the script should follow you.
+
+## Usage
+### Usage on Linux
 
 Install python3 and inkscape.  For Ubuntu try
 
@@ -18,7 +25,7 @@ Excute script from root folder of repo.
 
     python3 autoLyrics.py
 
-## Usage on Windows
+### Usage on Windows
 
 Install [Python3 for windows](https://www.python.org/downloads/release/python-385/)
 
