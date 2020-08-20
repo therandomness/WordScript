@@ -129,8 +129,10 @@ class SongPlates:
             elif item.attrib['id'] == "CCLIlicense":
                 self.ccli_license = item
 
-        assert self.title_title is not None, "The SVG template must contain a text element named 'SongTitle'"
-        assert self.title_author is not None, "The SVG template must contain a text element named 'SongAuthor'"
+        assert self.title_title is not None, \
+            "The SVG template must contain a text element named 'SongTitle'"
+        assert self.title_author is not None, \
+            "The SVG template must contain a text element named 'SongAuthor'"
 
     def num_lines_per_plate(self):
         """Return the number of lines available in the words template
@@ -196,12 +198,13 @@ class SongPlates:
                 self.title_author.text = parsed_song[i][0].replace("|", "/")
 
                 if "#" in i and self.ccli_song is not None:
-                    self.ccli_song.text = "CCLI Song # {}".format(i.split("#")[1].strip())
+                    self.ccli_song.text = "CCLI Song # {}".format(
+                        i.split("#")[1].strip())
 
                 for j in parsed_song[i]:
                     if j.startswith("CCLI Licence") and self.ccli_license is not None:
-                        self.ccli_license.text = "CCLI Licence # {}".format(j.split("No.")[1].strip())
-
+                        self.ccli_license.text = "CCLI Licence # {}".format(
+                            j.split("No.")[1].strip())
 
         self.title_et.write("temp.svg")
 
