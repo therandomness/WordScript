@@ -202,9 +202,10 @@ class SongPlates:
                         i.split("#")[1].strip())
 
                 for j in parsed_song[i]:
-                    if j.startswith("CCLI Licence") and self.ccli_license is not None:
-                        self.ccli_license.text = "CCLI Licence # {}".format(
-                            j.split("No.")[1].strip())
+                    if j.startswith("CCLI Licence"):
+                        if self.ccli_license is not None:
+                            self.ccli_license.text = "CCLI Licence # {}".format(
+                                j.split("No.")[1].strip())
 
         self.title_et.write("temp.svg")
 
