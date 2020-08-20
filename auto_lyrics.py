@@ -166,6 +166,16 @@ class SongPlates:
                     words_for_plate = parsed_song[
                         section][i:i + self.num_lines_per_plate()]
 
+                    # Try to pad the lines
+                    extra_space = self.num_lines_per_plate() - len(words_for_plate)
+                    while extra_space > 0:
+                        if extra_space > 1:
+                            words_for_plate = [""] + words_for_plate + [""]
+                            extra_space -= 2
+                        else:
+                            words_for_plate = words_for_plate + [""]
+                            extra_space -= 1
+
                     short_words = "".join(words_for_plate)
                     short_words = "".join(short_words.split())
                     short_words = short_words.replace("'", "")
