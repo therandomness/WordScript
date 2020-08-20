@@ -168,7 +168,7 @@ class SongPlates:
 
                     # Try to pad the lines
                     extra_space = (self.num_lines_per_plate() 
-                                    - len(words_for_plate))
+                                   - len(words_for_plate))
 
                     while extra_space > 0:
                         if extra_space > 1:
