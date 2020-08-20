@@ -115,12 +115,24 @@ class SongPlates:
         self.title_et = xml.etree.ElementTree.parse(title_template)
         self.title_title = None
         self.title_author = None
+        self.ccli_song = None
+        self.ccli_license = None
+
         # Finding all the tagged things and splitting them up
         for item in self.title_et.findall('.//*[@id]'):
             if item.attrib['id'] == "SongTitle":
                 self.title_title = item
             elif item.attrib['id'] == "SongAuthor":
                 self.title_author = item
+            elif item.attrib['id'] == "CCLIsong":
+                self.ccli_song = item
+            elif item.attrib['id'] == "CCLIlicense":
+                self.ccli_license = item
+
+        assert self.title_title is not None, \
+            "The SVG template must contain a text element named 'SongTitle'"
+        assert self.title_author is not None, \
+            "The SVG template must contain a text element named 'SongAuthor'"
 
     def num_lines_per_plate(self):
         """Return the number of lines available in the words template
@@ -184,6 +196,17 @@ class SongPlates:
         for i in parsed_song:
             if i.startswith("CCLI"):
                 self.title_author.text = parsed_song[i][0].replace("|", "/")
+
+                if "#" in i and self.ccli_song is not None:
+                    self.ccli_song.text = "CCLI Song # {}".format(
+                        i.split("#")[1].strip())
+
+                for j in parsed_song[i]:
+                    if j.startswith("CCLI Licence"):
+                        if self.ccli_license is not None:
+                            self.ccli_license.text = \
+                                "CCLI Licence # {}".format(
+                                    j.split("No.")[1].strip())
 
         self.title_et.write("temp.svg")
 
