@@ -24,6 +24,8 @@ import platform
 MAGIC_SONG_NAMES = [
     "Verse",
     "Chorus",
+    "Pre-Chorus",
+    "Tag",
     "Bridge",
     "CCLI Song #",
     "Interlude",
