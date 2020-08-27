@@ -209,52 +209,51 @@ class SongPlates:
             os.makedirs(song_title)
 
         title_et = xml.etree.ElementTree.parse(self.title_template)
-        title_title = []
-        title_author = []
-        ccli_song = []
-        ccli_license = []
+
+        xml_tags = {
+            "<TITLE>": [],
+            "<AUTHOR>": [],
+            "<CCLIsong>": [],
+            "<CCLIlicence>": [],
+            }
+
 
         # Finding all the tagged things and splitting them up
         for item in title_et.findall(TSPAN_TAG):
-            if "<TITLE>" in item.text:
-                title_title += [item]
-            if "<AUTHOR>" in item.text:
-                title_author += [item]
-            if "<CCLIsong>" in item.text:
-                ccli_song += [item]
-            if "<CCLIlicence>" in item.text:
-                ccli_license += [item]
+            for tag in xml_tags:
+                if tag in item.text:
+                    xml_tags[tag] += [item]
 
-        assert title_title is not None, \
+        assert xml_tags["<TITLE>"] is not None, \
             "The SVG template must contain a text element named 'SongTitle'"
-        assert title_author is not None, \
+        assert xml_tags["<AUTHOR>"] is not None, \
             "The SVG template must contain a text element named 'SongAuthor'"
 
-        for item in title_title:
-            item.text = item.text.replace("<TITLE>", f"{song_title}")
+        def replace_tags(key, new_value):
+            for item in xml_tags[key]:
+                item.text = item.text.replace(key, new_value)
+
+        replace_tags("<TITLE>", f"{song_title}")
 
         for i in parsed_song:
             if i.startswith("CCLI"):
-                for item in title_author:
-                    item.text = item.text.replace(
-                        "<AUTHOR>",
-                        parsed_song[i][0].replace("|", "/")
-                        )
+                replace_tags(
+                    "<AUTHOR>",
+                    parsed_song[i][0].replace("|", "/")
+                    )
 
                 if "#" in i:
-                    for item in ccli_song:
-                        item.text = item.text.replace(
-                            "<CCLIsong>",
-                            i.split("#")[1].strip()
-                            )
+                    replace_tags(
+                        "<CCLIsong>",
+                        i.split("#")[1].strip()
+                        )
 
                 for j in parsed_song[i]:
                     if j.startswith("CCLI Licence"):
-                        for item in ccli_license:
-                            item.text = item.text.replace(
-                                "<CCLIlicence>",
-                                j.split("No.")[1].strip()
-                                )
+                        replace_tags(
+                            "<CCLIlicence>",
+                            j.split("No.")[1].strip()
+                            )
 
         title_et.write("temp.svg")
 
