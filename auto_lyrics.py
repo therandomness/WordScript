@@ -32,6 +32,8 @@ MAGIC_SONG_NAMES = [
     "Ending"
 ]
 
+TSPAN_TAG = ".//{http://www.w3.org/2000/svg}tspan"
+
 
 def call_inkscape(inputpath, outputpath):
     """Call inkscape to build a PNG
@@ -107,39 +109,36 @@ class SongPlates:
         words_template -- string filename of SVG template for words
         title_template -- string filename of SVG template for the title slide
         """
-        self.words_et = xml.etree.ElementTree.parse(words_template)
-        self.words_lines = []
-        # Finding all the tagged things and splitting them up
-        for item in self.words_et.findall('.//*[@id]'):
-            if item.attrib['id'] == "words":
-                self.words_lines += item
-
-        self.title_et = xml.etree.ElementTree.parse(title_template)
-        self.title_title = None
-        self.title_author = None
-        self.ccli_song = None
-        self.ccli_license = None
-
-        # Finding all the tagged things and splitting them up
-        for item in self.title_et.findall('.//*[@id]'):
-            if item.attrib['id'] == "SongTitle":
-                self.title_title = item
-            elif item.attrib['id'] == "SongAuthor":
-                self.title_author = item
-            elif item.attrib['id'] == "CCLIsong":
-                self.ccli_song = item
-            elif item.attrib['id'] == "CCLIlicense":
-                self.ccli_license = item
-
-        assert self.title_title is not None, \
-            "The SVG template must contain a text element named 'SongTitle'"
-        assert self.title_author is not None, \
-            "The SVG template must contain a text element named 'SongAuthor'"
+        self.words_template = words_template
+        self.title_template = title_template
 
     def num_lines_per_plate(self):
         """Return the number of lines available in the words template
         """
-        return len(self.words_lines)
+        words_et = xml.etree.ElementTree.parse(self.words_template)
+        words_lines = []
+        # Finding all the tagged things and splitting them up
+        for item in words_et.findall(TSPAN_TAG):
+            if "<WORDS>" in item.text:
+                words_lines += [item]
+
+        return len(words_lines)
+
+    @staticmethod
+    def pad_array(array_input, output_size):
+        """Pad an array by pre/post-pending empty strings.
+        """
+
+        extra_space = output_size - len(array_input)
+
+        while extra_space > 0:
+            if extra_space > 1:
+                array_input = [""] + array_input + [""]
+                extra_space -= 2
+            else:
+                array_input = array_input + [""]
+                extra_space -= 1
+        return array_input
 
     def gen_word_plates(self, parsed_song):
         """Generate the words images for a given song.
@@ -168,17 +167,10 @@ class SongPlates:
                     words_for_plate = parsed_song[
                         section][i:i + self.num_lines_per_plate()]
 
-                    # Try to pad the lines
-                    extra_space = (self.num_lines_per_plate()
-                                   - len(words_for_plate))
-
-                    while extra_space > 0:
-                        if extra_space > 1:
-                            words_for_plate = [""] + words_for_plate + [""]
-                            extra_space -= 2
-                        else:
-                            words_for_plate = words_for_plate + [""]
-                            extra_space -= 1
+                    words_for_plate = SongPlates.pad_array(
+                        words_for_plate,
+                        self.num_lines_per_plate()
+                        )
 
                     short_words = "".join(words_for_plate)
                     short_words = "".join(short_words.split())
@@ -190,12 +182,21 @@ class SongPlates:
                         short_words
                         )
 
-                    for element, text in zip(
-                            self.words_lines,
-                            words_for_plate):
-                        element.text = text
+                    words_et = xml.etree.ElementTree.parse(
+                        self.words_template)
 
-                    self.words_et.write("temp.svg")
+                    words_lines = []
+                    # Finding all the tagged things and splitting them up
+                    for item in words_et.findall(TSPAN_TAG):
+                        if "<WORDS>" in item.text:
+                            words_lines += [item]
+
+                    for element, text in zip(
+                            words_lines,
+                            words_for_plate):
+                        element.text = element.text.replace("<WORDS>", text)
+
+                    words_et.write("temp.svg")
 
                     call_inkscape(
                         "temp.svg",
@@ -216,24 +217,53 @@ class SongPlates:
         if not os.path.exists(song_title):
             os.makedirs(song_title)
 
-        self.title_title.text = '"{}"'.format(song_title)
-        self.title_author.text = None
+        title_et = xml.etree.ElementTree.parse(self.title_template)
+
+        xml_tags = {
+            "<TITLE>": [],
+            "<AUTHOR>": [],
+            "<CCLIsong>": [],
+            "<CCLIlicence>": [],
+            }
+
+        # Finding all the tagged things and splitting them up
+        for item in title_et.findall(TSPAN_TAG):
+            for tag in xml_tags:
+                if tag in item.text:
+                    xml_tags[tag] += [item]
+
+        assert xml_tags["<TITLE>"] is not None, \
+            "The SVG template must contain a text element named 'SongTitle'"
+        assert xml_tags["<AUTHOR>"] is not None, \
+            "The SVG template must contain a text element named 'SongAuthor'"
+
+        def replace_tags(key, new_value):
+            for item in xml_tags[key]:
+                item.text = item.text.replace(key, new_value)
+
+        replace_tags("<TITLE>", f"{song_title}")
+
         for i in parsed_song:
             if i.startswith("CCLI"):
-                self.title_author.text = parsed_song[i][0].replace("|", "/")
+                replace_tags(
+                    "<AUTHOR>",
+                    parsed_song[i][0].replace("|", "/")
+                    )
 
-                if "#" in i and self.ccli_song is not None:
-                    self.ccli_song.text = "CCLI Song # {}".format(
-                        i.split("#")[1].strip())
+                if "#" in i:
+                    replace_tags(
+                        "<CCLIsong>",
+                        i.split("#")[1].strip()
+                        )
 
                 for j in parsed_song[i]:
                     if j.startswith("CCLI Licence"):
-                        if self.ccli_license is not None:
-                            self.ccli_license.text = \
-                                "CCLI Licence # {}".format(
-                                    j.split("No.")[1].strip())
+                        replace_tags(
+                            "<CCLIlicence>",
+                            j.split("No.")[1].strip()
+                            )
 
-        self.title_et.write("temp.svg")
+        title_et.write("temp.svg")
 
         call_inkscape("temp.svg", os.path.join(song_title, "titleslide"))
 

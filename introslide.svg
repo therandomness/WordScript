@@ -8,7 +8,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="introslide.svg"
-   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    id="svg8"
    version="1.1"
    viewBox="0 0 508 285.75"
@@ -133,16 +133,16 @@
      inkscape:document-rotation="0"
      units="px"
      inkscape:window-maximized="1"
-     inkscape:window-y="-8"
-     inkscape:window-x="3832"
-     inkscape:window-height="1017"
+     inkscape:window-y="27"
+     inkscape:window-x="0"
+     inkscape:window-height="1025"
      inkscape:window-width="1920"
      showgrid="false"
      inkscape:current-layer="layer1"
      inkscape:document-units="mm"
-     inkscape:cy="410.34371"
-     inkscape:cx="836.03117"
-     inkscape:zoom="0.508233"
+     inkscape:cy="-71.411322"
+     inkscape:cx="9.0779091"
+     inkscape:zoom="0.27760863"
      inkscape:pageshadow="2"
      inkscape:pageopacity="1"
      borderopacity="1.0"
@@ -157,7 +157,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -170,38 +170,38 @@
        id="Title"
        y="54.097816"
        x="260.78128"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.0403px;line-height:125%;font-family:FreeSans;-inkscape-font-specification:FreeSans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.798763px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.04030037px;line-height:125%;font-family:FreeSans;-inkscape-font-specification:FreeSans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.79876298px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25.5604px;font-family:'Sofia Pro';-inkscape-font-specification:'Sofia Pro';text-align:center;text-anchor:middle;stroke-width:0.798763px"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25.56040001px;font-family:'Sofia Pro';-inkscape-font-specification:'Sofia Pro';text-align:center;text-anchor:middle;stroke-width:0.79876298px"
          y="54.097816"
          x="264.17603"
          id="SongTitle"
-         sodipodi:role="line">&quot;Song Title&quot; </tspan><tspan
+         sodipodi:role="line">&quot;&lt;TITLE&gt;&quot; </tspan><tspan
          id="tspan5515"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.0403px;font-family:'Sofia Pro';-inkscape-font-specification:'Sofia Pro';text-align:center;text-anchor:middle;stroke-width:0.798763px"
-         y="75.39817"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.04030037px;font-family:'Sofia Pro';-inkscape-font-specification:'Sofia Pro';text-align:center;text-anchor:middle;stroke-width:0.79876298px"
+         y="75.398193"
          x="263.04443"
          sodipodi:role="line">by </tspan><tspan
          id="SongAuthor"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.0403px;font-family:'Sofia Pro';-inkscape-font-specification:'Sofia Pro';text-align:center;text-anchor:middle;stroke-width:0.798763px"
-         y="97.550537"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.04030037px;font-family:'Sofia Pro';-inkscape-font-specification:'Sofia Pro';text-align:center;text-anchor:middle;stroke-width:0.79876298px"
+         y="97.550583"
          x="260.78128"
-         sodipodi:role="line">Authors</tspan></text>
+         sodipodi:role="line">&lt;AUTHOR&gt;</tspan></text>
     <text
        id="text41"
        y="120.60946"
        x="260.80411"
-       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-weight:normal;font-size:10.58329964px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458299"
        xml:space="preserve"><tspan
-         style="text-align:center;text-anchor:middle;stroke-width:0.264583"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458299"
          y="120.60946"
          x="260.80411"
          id="CCLIsong"
-         sodipodi:role="line">CCLI Song #</tspan><tspan
+         sodipodi:role="line">CCLI Song # &lt;CCLIsong&gt;</tspan><tspan
          id="CCLIlicense"
-         style="text-align:center;text-anchor:middle;stroke-width:0.264583"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458299"
          y="133.83858"
          x="260.80411"
-         sodipodi:role="line">CCLI License #</tspan></text>
+         sodipodi:role="line">CCLI Licence # &lt;CCLIlicence&gt;</tspan></text>
   </g>
 </svg>
