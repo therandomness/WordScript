@@ -34,6 +34,7 @@ MAGIC_SONG_NAMES = [
 
 TSPAN_TAG = ".//{http://www.w3.org/2000/svg}tspan"
 
+
 def call_inkscape(inputpath, outputpath):
     """Call inkscape to build a PNG
 
