@@ -124,8 +124,11 @@ class SongPlates:
 
         return len(words_lines)
 
+    @staticmethod
     def pad_array(array_input, output_size):
-        # Try to pad the lines
+        """Pad an array by pre/post-pending empty strings.
+        """
+
         extra_space = output_size - len(array_input)
 
         while extra_space > 0:
