@@ -32,6 +32,8 @@ MAGIC_SONG_NAMES = [
     "Ending"
 ]
 
+TSPAN_TAG = ".//{http://www.w3.org/2000/svg}tspan"
+
 
 def call_inkscape(inputpath, outputpath):
     """Call inkscape to build a PNG
@@ -107,38 +109,19 @@ class SongPlates:
         words_template -- string filename of SVG template for words
         title_template -- string filename of SVG template for the title slide
         """
-        self.words_et = xml.etree.ElementTree.parse(words_template)
-        self.words_lines = []
-        # Finding all the tagged things and splitting them up
-        for item in self.words_et.findall('.//*[@id]'):
-            if item.attrib['id'] == "words":
-                self.words_lines += item
-
-        self.title_et = xml.etree.ElementTree.parse(title_template)
-        self.title_title = None
-        self.title_author = None
-        self.ccli_song = None
-        self.ccli_license = None
-
-        # Finding all the tagged things and splitting them up
-        for item in self.title_et.findall('.//*[@id]'):
-            if item.attrib['id'] == "SongTitle":
-                self.title_title = item
-            elif item.attrib['id'] == "SongAuthor":
-                self.title_author = item
-            elif item.attrib['id'] == "CCLIsong":
-                self.ccli_song = item
-            elif item.attrib['id'] == "CCLIlicense":
-                self.ccli_license = item
-
-        assert self.title_title is not None, \
-            "The SVG template must contain a text element named 'SongTitle'"
-        assert self.title_author is not None, \
-            "The SVG template must contain a text element named 'SongAuthor'"
+        self.words_template = words_template
+        self.title_template = title_template
 
     def num_lines_per_plate(self):
         """Return the number of lines available in the words template
         """
+        self.words_et = xml.etree.ElementTree.parse(self.words_template)
+        self.words_lines = []
+        # Finding all the tagged things and splitting them up
+        for item in self.words_et.findall(TSPAN_TAG):
+            if "<WORDS>" in item.text:
+                self.words_lines += [item]
+
         return len(self.words_lines)
 
     def gen_plates(self, parsed_song):
@@ -178,10 +161,20 @@ class SongPlates:
                         short_words
                         )
 
+                    self.words_et = xml.etree.ElementTree.parse(
+                        self.words_template)
+
+                    self.words_lines = []
+                    # Finding all the tagged things and splitting them up
+                    for item in self.words_et.findall(TSPAN_TAG):
+                        if "<WORDS>" in item.text:
+                            self.words_lines += [item]
+
+
                     for element, text in zip(
                             self.words_lines,
                             words_for_plate):
-                        element.text = text
+                        element.text = element.text.replace("<WORDS>", text)
 
                     self.words_et.write("temp.svg")
 
@@ -193,22 +186,53 @@ class SongPlates:
                         )
                     )
 
-        self.title_title.text = '"{}"'.format(song_title)
-        self.title_author.text = None
+        self.title_et = xml.etree.ElementTree.parse(self.title_template)
+        self.title_title = []
+        self.title_author = []
+        self.ccli_song = []
+        self.ccli_license = []
+
+        # Finding all the tagged things and splitting them up
+        for item in self.title_et.findall(TSPAN_TAG):
+            if "<TITLE>" in item.text:
+                self.title_title += [item]
+            if "<AUTHOR>" in item.text:
+                self.title_author += [item]
+            if "<CCLIsong>" in item.text:
+                self.ccli_song += [item]
+            if "<CCLIlicence>" in item.text:
+                self.ccli_license += [item]
+
+        assert self.title_title is not None, \
+            "The SVG template must contain a text element named 'SongTitle'"
+        assert self.title_author is not None, \
+            "The SVG template must contain a text element named 'SongAuthor'"
+
+        for item in self.title_title:
+            item.text = item.text.replace("<TITLE>", f"{song_title}")
+
         for i in parsed_song:
             if i.startswith("CCLI"):
-                self.title_author.text = parsed_song[i][0].replace("|", "/")
+                for item in self.title_author:
+                    item.text = item.text.replace(
+                        "<AUTHOR>",
+                        parsed_song[i][0].replace("|", "/")
+                        )
 
-                if "#" in i and self.ccli_song is not None:
-                    self.ccli_song.text = "CCLI Song # {}".format(
-                        i.split("#")[1].strip())
+                if "#" in i:
+                    for item in self.ccli_song:
+                        item.text = item.text.replace(
+                            "<CCLIsong>",
+                            i.split("#")[1].strip()
+                            )
 
                 for j in parsed_song[i]:
                     if j.startswith("CCLI Licence"):
-                        if self.ccli_license is not None:
-                            self.ccli_license.text = \
-                                "CCLI Licence # {}".format(
-                                    j.split("No.")[1].strip())
+                        for item in self.ccli_license:
+                            item.text = item.text.replace(
+                                "<CCLIlicence>",
+                                j.split("No.")[1].strip()
+                                )
 
         self.title_et.write("temp.svg")
 
