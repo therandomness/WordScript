@@ -170,7 +170,6 @@ class SongPlates:
                         if "<WORDS>" in item.text:
                             self.words_lines += [item]
 
-
                     for element, text in zip(
                             self.words_lines,
                             words_for_plate):
