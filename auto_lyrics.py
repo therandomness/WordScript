@@ -124,6 +124,19 @@ class SongPlates:
 
         return len(words_lines)
 
+    def pad_array(array_input, output_size):
+        # Try to pad the lines
+        extra_space = output_size - len(array_input)
+
+        while extra_space > 0:
+            if extra_space > 1:
+                array_input = [""] + array_input + [""]
+                extra_space -= 2
+            else:
+                array_input = array_input + [""]
+                extra_space -= 1
+        return array_input
+
     def gen_word_plates(self, parsed_song):
         """Generate the words images for a given song.
         Steps through the various blocks of words creating PNG images.
@@ -151,17 +164,10 @@ class SongPlates:
                     words_for_plate = parsed_song[
                         section][i:i + self.num_lines_per_plate()]
 
-                    # Try to pad the lines
-                    extra_space = (self.num_lines_per_plate()
-                                   - len(words_for_plate))
-
-                    while extra_space > 0:
-                        if extra_space > 1:
-                            words_for_plate = [""] + words_for_plate + [""]
-                            extra_space -= 2
-                        else:
-                            words_for_plate = words_for_plate + [""]
-                            extra_space -= 1
+                    words_for_plate = SongPlates.pad_array(
+                        words_for_plate,
+                        self.num_lines_per_plate()
+                        )
 
                     short_words = "".join(words_for_plate)
                     short_words = "".join(short_words.split())
