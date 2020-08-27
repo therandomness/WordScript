@@ -19,7 +19,7 @@ The tags matched in introslide.svg are:
 * `<CCLIlicence>` - Replaced with the CCLI Licence number
 
 The tags matched  in basebackground.svg are:
-* <WORDS> - Each instance found is replaced with the next  line of a song.
+* `<WORDS>` - Each instance found is replaced with the next  line of a song.
     * So if there's  3 instances of <WORDS> in the template, 3 lines of song will print per image.
 
 Also, you can edit the sample text to have the number of lines you want per slide and the script should follow you.
