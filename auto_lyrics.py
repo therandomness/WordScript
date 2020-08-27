@@ -141,8 +141,8 @@ class SongPlates:
         """
         return len(self.words_lines)
 
-    def gen_plates(self, parsed_song):
-        """Generate the images for a given song.
+    def gen_word_plates(self, parsed_song):
+        """Generate the words images for a given song.
         Steps through the various blocks of words creating PNG images.
 
         Keyword arguements:
@@ -167,6 +167,18 @@ class SongPlates:
 
                     words_for_plate = parsed_song[
                         section][i:i + self.num_lines_per_plate()]
+
+                    # Try to pad the lines
+                    extra_space = (self.num_lines_per_plate()
+                                   - len(words_for_plate))
+
+                    while extra_space > 0:
+                        if extra_space > 1:
+                            words_for_plate = [""] + words_for_plate + [""]
+                            extra_space -= 2
+                        else:
+                            words_for_plate = words_for_plate + [""]
+                            extra_space -= 1
 
                     short_words = "".join(words_for_plate)
                     short_words = "".join(short_words.split())
@@ -193,6 +205,17 @@ class SongPlates:
                         )
                     )
 
+    def gen_title_plate(self, parsed_song):
+        """Generate the title image for a given song.
+
+        Keyword arguements:
+        parsed_song -- A dictionary, typcially the output from songparse()
+        """
+
+        song_title = parsed_song["Title"][0]
+        if not os.path.exists(song_title):
+            os.makedirs(song_title)
+
         self.title_title.text = '"{}"'.format(song_title)
         self.title_author.text = None
         for i in parsed_song:
@@ -218,4 +241,5 @@ class SongPlates:
 plates = SongPlates("basebackground.svg", "introslide.svg")
 for file in glob.glob("*.txt"):
     song_info = songparse(file)
-    plates.gen_plates(song_info)
+    plates.gen_word_plates(song_info)
+    plates.gen_title_plate(song_info)
