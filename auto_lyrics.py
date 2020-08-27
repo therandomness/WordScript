@@ -217,7 +217,6 @@ class SongPlates:
             "<CCLIlicence>": [],
             }
 
-
         # Finding all the tagged things and splitting them up
         for item in title_et.findall(TSPAN_TAG):
             for tag in xml_tags:
